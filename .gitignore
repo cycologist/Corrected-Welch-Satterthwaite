@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Generated simulation output
+simulation_results.txt
+
+# R
+.Rhistory
+.RData
+.Rproj.user/

@@ -1,6 +1,6 @@
 # Corrected Welch–Satterthwaite
 
-This repository contains an R implementation of the **corrected
+This repository contains R and Python implementations of the **corrected
 Welch–Satterthwaite equation** for the effective degrees of freedom of a
 weighted sum of independent variance components.
 
@@ -19,6 +19,7 @@ Effective Sample but Were Afraid to Ask* (arXiv:2602.20912).
   - [Applying `cws()` row-wise](#applying-cws-row-wise)
   - [Running the simulation script](#running-the-simulation-script)
   - [Input rules and edge cases](#input-rules-and-edge-cases)
+- [Python implementation](#python-implementation)
 - [Related arXiv papers](#related-arxiv-papers)
 - [Classical references](#classical-references)
 
@@ -83,6 +84,8 @@ s2^2 / (w1^2 * s2_1^2 / (nu_1 + 2) +
 | --- | --- |
 | `corrected_welch_satterthwaite.R` | Defines `cws2()` for two components and `cws()` for $K\ge 1$ components. |
 | `simulate_corrected_ws.R` | Simulation study comparing the corrected estimator to the target $K\nu$. |
+| `corrected_welch_satterthwaite.py` | Python translation of `cws2()` and `cws()`. |
+| `simulate_corrected_ws.py` | Python translation of the simulation study. |
 | `short_satter_07152026.tex` | LaTeX source of the derivation and paper. |
 | `LICENSE` | CC0 1.0 Universal public-domain dedication. |
 | `README.md` | This file. |
@@ -362,6 +365,99 @@ If you do not want to commit generated output, add
 - For a sample variance based on $n$ observations, use $\nu=n-1$.
   For jackknife or balanced repeated replication components, the
   component degrees of freedom are often $\nu_k=1$.
+
+## Python implementation
+
+The Python translation is in `corrected_welch_satterthwaite.py`, with the
+simulation study in `simulate_corrected_ws.py`. It uses only the Python
+standard library, so no packages need to be installed.
+
+### Python setup
+
+From the repository directory:
+
+```bash
+cd /home/matthias/python/Corrected-Welch-Satterthwaite
+python3 -c 'from corrected_welch_satterthwaite import cws2; print(cws2(2, 3, 10, 20))'
+```
+
+### Python `cws2()`
+
+```python
+from corrected_welch_satterthwaite import cws2
+
+cws2(2, 3, 10, 20)
+# 31.673469387755105
+
+cws2(4, 9, 5, 8, w1=2, w2=3)
+# 12.931220616402577
+
+cws2(0, 3, 10, 20)
+# 20.0
+```
+
+### Python `cws()`
+
+```python
+from corrected_welch_satterthwaite import cws
+
+cws([2, 3], [10, 20])
+# 31.673469387755105
+
+cws([2, 3], [10, 20], w=[1, 2])
+# 30.49230769230769
+
+cws([1, 2, 3], [5, 10, 15], w=[1, 2, 3])
+# 29.405745062836626
+```
+
+The Python `cws()` function accepts any sequence of real numbers for
+`s2`, `nu`, and `w`; `cws2()` takes six scalar arguments. Both apply the
+same constraints as the R functions:
+
+- `s2` values must be non-negative,
+- `nu` values must be positive,
+- `w` values must be positive,
+- all three sequences must have the same length.
+
+### Running the Python simulation script
+
+```bash
+python3 simulate_corrected_ws.py
+```
+
+The Python simulation mirrors the R script: seed `20260715`, the same
+`K` and `nu` grids, and `NSIM = 10000` replications per cell. R and
+Python use different random number generators, so the simulated values
+are not identical, but the bias and RMSE patterns are the same.
+
+The first rows of the Python output are:
+
+```text
+  K nu target_df mean_df     bias relative_bias   mc_se    rmse
+  2  1         2   2.262   0.2623      0.131143 0.01048   1.080
+  2  2         4   4.281   0.2807      0.070175 0.01292   1.322
+  2  3         6   6.309   0.3086      0.051436 0.01439   1.471
+  2  4         8   8.292   0.2917      0.036466 0.01551   1.579
+  2  5        10  10.259   0.2593      0.025931 0.01660   1.680
+  2 10        20  20.171   0.1706      0.008529 0.01979   1.986
+```
+
+The last rows are:
+
+```text
+  K nu target_df mean_df     bias relative_bias   mc_se    rmse
+ 30 10       300 300.501   0.5013      0.001671 0.13361  13.370
+ 40  1        40  41.903   1.9027      0.047568 0.08551   8.760
+ 40  2        80  81.372   1.3718      0.017148 0.11254  11.337
+ 40  3       120 121.447   1.4468      0.012056 0.12612  12.694
+ 40  4       160 161.138   1.1384      0.007115 0.13483  13.530
+ 40  5       200 201.047   1.0475      0.005237 0.13972  14.011
+ 40 10       400 400.973   0.9734      0.002433 0.15599  15.629
+```
+
+The output columns match the R simulation: `K`, `nu`, `target_df`,
+`mean_df`, `bias`, `relative_bias`, `mc_se`, and `rmse`.
 
 ## Related arXiv papers
 
