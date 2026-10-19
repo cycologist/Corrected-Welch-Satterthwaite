@@ -1,8 +1,8 @@
 # Corrected Welch–Satterthwaite
 
-This repository contains R and Python implementations of the **corrected
-Welch–Satterthwaite equation** for the effective degrees of freedom of a
-weighted sum of independent variance components.
+This repository contains R, Python, and SAS/IML implementations of the
+**corrected Welch–Satterthwaite equation** for the effective degrees of
+freedom of a weighted sum of independent variance components.
 
 The implementation follows von Davier (2026), *A Corrected Welch
 Satterthwaite Equation. And: What You Always Wanted to Know About Kish's
@@ -20,6 +20,7 @@ Effective Sample but Were Afraid to Ask* (arXiv:2602.20912).
   - [Running the simulation script](#running-the-simulation-script)
   - [Input rules and edge cases](#input-rules-and-edge-cases)
 - [Python implementation](#python-implementation)
+- [SAS/IML implementation](#sasiml-implementation)
 - [Related arXiv papers](#related-arxiv-papers)
 - [Classical references](#classical-references)
 
@@ -86,6 +87,8 @@ s2^2 / (w1^2 * s2_1^2 / (nu_1 + 2) +
 | `simulate_corrected_ws.R` | Simulation study comparing the corrected estimator to the target $K\nu$. |
 | `corrected_welch_satterthwaite.py` | Python translation of `cws2()` and `cws()`. |
 | `simulate_corrected_ws.py` | Python translation of the simulation study. |
+| `corrected_welch_satterthwaite_iml.sas` | SAS/IML source defining `cws()` and `cws2()` modules. |
+| `simulate_corrected_ws.sas` | SAS/IML translation of the simulation study. |
 | `short_satter_07152026.tex` | LaTeX source of the derivation and paper. |
 | `LICENSE` | CC0 1.0 Universal public-domain dedication. |
 | `README.md` | This file. |
@@ -458,6 +461,119 @@ The last rows are:
 
 The output columns match the R simulation: `K`, `nu`, `target_df`,
 `mean_df`, `bias`, `relative_bias`, `mc_se`, and `rmse`.
+
+## SAS/IML implementation
+
+The SAS versions are written with `PROC IML`.
+`corrected_welch_satterthwaite_iml.sas` contains SAS/IML modules for `cws()`
+and `cws2()` and is intended to be included inside a `proc iml` step.
+
+### SAS setup
+
+Submit the following from SAS:
+
+```sas
+proc iml;
+   %include "corrected_welch_satterthwaite_iml.sas";
+
+   s2 = {2 3};
+   nu = {10 20};
+   w  = {1 2};
+
+   df1 = cws2(2, 3, 10, 20, 1, 1);
+   df2 = cws(s2, nu, w);
+
+   print df1 df2;
+quit;
+```
+
+If your SAS working directory is not the repository directory, use a full
+path in the `%include` statement. SAS/IML modules remain available only for
+the duration of the current `PROC IML` step, so include the file again in a
+new `PROC IML` step or copy the `start ... finish` blocks into your own
+program.
+
+### SAS `cws2()`
+
+The SAS module takes the weights explicitly. For the equal-weight case, pass
+`1, 1`:
+
+```sas
+proc iml;
+   %include "corrected_welch_satterthwaite_iml.sas";
+
+   df1 = cws2(2, 3, 10, 20, 1, 1);
+   /* 31.673469 */
+
+   df2 = cws2(4, 9, 5, 8, 2, 3);
+   /* 12.931221 */
+
+   df3 = cws2(0, 3, 10, 20, 1, 1);
+   /* 20 */
+
+   print df1 df2 df3;
+quit;
+```
+
+### SAS `cws()`
+
+The vectorized SAS module accepts row or column vectors and converts them
+internally to column vectors:
+
+```sas
+proc iml;
+   %include "corrected_welch_satterthwaite_iml.sas";
+
+   df1 = cws({2 3}, {10 20}, {1 1});
+   /* 31.673469 */
+
+   df2 = cws({2 3}, {10 20}, {1 2});
+   /* 30.492308 */
+
+   df3 = cws({1 2 3}, {5 10 15}, {1 2 3});
+   /* 29.405745 */
+
+   print df1 df2 df3;
+quit;
+```
+
+For the equal-weight case, you can also build the weight vector explicitly:
+
+```sas
+s2 = {1 2 3};
+nu = {5 10 15};
+w  = J(ncol(s2), 1, 1);
+df = cws(s2, nu, w);
+```
+
+### Direct SAS/IML formula
+
+For vectors `s2`, `nu`, and `w`, the corrected estimator can also be written
+directly in SAS/IML:
+
+```sas
+num = sum(w # s2);
+den = sum((w # w) # (s2 # s2) #/ (nu + 2));
+df_vD = num**2 / den - 2;
+```
+
+Here `#` is elementwise multiplication and `#/` is elementwise division.
+
+### Running the SAS simulation script
+
+Run `simulate_corrected_ws.sas` from the repository directory:
+
+```sas
+%include "simulate_corrected_ws.sas";
+```
+
+or open and submit the file. The script uses the same `K` and `nu` grid and
+`nsim = 10000` replications per cell as the R and Python simulations. It
+produces a SAS/IML output matrix with columns `K`, `nu`, `target_df`,
+`mean_df`, `bias`, `relative_bias`, `mc_se`, and `rmse`.
+
+The SAS random-number stream differs from the R and Python streams, so the
+Monte Carlo values are not expected to match the R or Python output exactly.
 
 ## Related arXiv papers
 
