@@ -35,21 +35,21 @@ $$\frac{\nu_{k}S_{k}^{2}}{\sigma_{k}^{2}}\sim\chi^{2}_{\nu_{k}}.$$
 
 The corrected Welch–Satterthwaite estimator is
 
-$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\frac{\left(S_{k}^{2}\right)^{2}}{\nu_{k}+2}} - 2.$$
+$$\nu^{\ast}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\frac{\left(S_{k}^{2}\right)^{2}}{\nu_{k}+2}} - 2.$$
 
 Equivalently, writing $S_{k}^{4}=(S_{k}^{2})^{2}$,
 
-$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} - 2.$$
+$$\nu^{\ast}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} - 2.$$
 
 The original Welch–Satterthwaite estimator omits the $+2$ in the
 denominator and the final $-2$:
 
-$$\nu^{*}_{WS} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}}}.$$
+$$\nu^{\ast}_{WS} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}}}.$$
 
 Boardman's (1974) "unbiased Satterthwaite" estimator has the same
 denominator as the corrected estimator but does **not** subtract 2:
 
-$$\nu^{*}_{Boardman} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} = \nu^{*}_{vD}+2.$$
+$$\nu^{\ast}_{Boardman} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} = \nu^{\ast}_{vD}+2.$$
 
 When all variance components are equal, $S_{k}^{2}\equiv\sigma_{E}^{2}$,
 and the component degrees of freedom are ignored, the original
@@ -193,7 +193,7 @@ cws(s2, nu, w = rep(1, length(s2)))
 
 The return value is a single numeric value:
 
-$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\left(S_{k}^{2}\right)^{2}/(\nu_{k}+2)} - 2.$$
+$$\nu^{\ast}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\left(S_{k}^{2}\right)^{2}/(\nu_{k}+2)} - 2.$$
 
 #### Basic call
 
