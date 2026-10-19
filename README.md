@@ -1,4 +1,4 @@
-# Documentation
+# Corrected Welch–Satterthwaite
 
 This repository contains an R implementation of the **corrected
 Welch–Satterthwaite equation** for the effective degrees of freedom of a
@@ -21,75 +21,41 @@ Effective Sample but Were Afraid to Ask* (arXiv:2602.20912).
   - [Input rules and edge cases](#input-rules-and-edge-cases)
 - [Related arXiv papers](#related-arxiv-papers)
 - [Classical references](#classical-references)
-- [Committing the documentation to GitHub](#committing-the-documentation-to-github)
 
 ## The corrected equation
 
 Let
 
-$$
-S^{2}=\sum_{k=1}^{K}w_{k}S_{k}^{2}
-$$
+$$S^{2}=\sum_{k=1}^{K}w_{k}S_{k}^{2}$$
 
 be a weighted sum of independent variance components $S_{1}^{2},\dots,S_{K}^{2}$,
 where $w_{k}>0$ and
 
-$$
-\frac{\nu_{k}S_{k}^{2}}{\sigma_{k}^{2}}\sim\chi^{2}_{\nu_{k}}.
-$$
+$$\frac{\nu_{k}S_{k}^{2}}{\sigma_{k}^{2}}\sim\chi^{2}_{\nu_{k}}.$$
 
 The corrected Welch–Satterthwaite estimator is
 
-$$
-\nu^{*}_{vD}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}
-{\sum_{k=1}^{K}w_{k}^{2}\frac{\left(S_{k}^{2}\right)^{2}}{\nu_{k}+2}}
--2.
-$$
+$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\frac{\left(S_{k}^{2}\right)^{2}}{\nu_{k}+2}} - 2.$$
 
 Equivalently, writing $S_{k}^{4}=(S_{k}^{2})^{2}$,
 
-$$
-\nu^{*}_{vD}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}
-{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}}
--2.
-$$
+$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} - 2.$$
 
 The original Welch–Satterthwaite estimator omits the $+2$ in the
 denominator and the final $-2$:
 
-$$
-\nu^{*}_{WS}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}
-{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}}}.
-$$
+$$\nu^{*}_{WS} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}}}.$$
 
 Boardman's (1974) "unbiased Satterthwaite" estimator has the same
 denominator as the corrected estimator but does **not** subtract 2:
 
-$$
-\nu^{*}_{Boardman}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}
-{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}}
-=
-\nu^{*}_{vD}+2.
-$$
+$$\nu^{*}_{Boardman} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}\frac{w_{k}^{2}S_{k}^{4}}{\nu_{k}+2}} = \nu^{*}_{vD}+2.$$
 
 When all variance components are equal, $S_{k}^{2}\equiv\sigma_{E}^{2}$,
 and the component degrees of freedom are ignored, the original
 Satterthwaite structure reduces to Kish's (1965) effective sample size:
 
-$$
-n_{\mathrm{eff}}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}\right)^{2}}
-{\sum_{k=1}^{K}w_{k}^{2}}.
-$$
+$$n_{\mathrm{eff}} = \frac{\left(\sum_{k=1}^{K}w_{k}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}}.$$
 
 This last expression is a theoretical special case; the R functions
 below implement the corrected equation for estimated variance
@@ -119,7 +85,7 @@ s2^2 / (w1^2 * s2_1^2 / (nu_1 + 2) +
 | `simulate_corrected_ws.R` | Simulation study comparing the corrected estimator to the target $K\nu$. |
 | `short_satter_07152026.tex` | LaTeX source of the derivation and paper. |
 | `LICENSE` | CC0 1.0 Universal public-domain dedication. |
-| `Documentation.md` | This file. |
+| `README.md` | This file. |
 
 ## Calling the R functions
 
@@ -227,13 +193,7 @@ cws(s2, nu, w = rep(1, length(s2)))
 
 The return value is a single numeric value:
 
-$$
-\nu^{*}_{vD}
-=
-\frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}
-{\sum_{k=1}^{K}w_{k}^{2}\left(S_{k}^{2}\right)^{2}/(\nu_{k}+2)}
--2.
-$$
+$$\nu^{*}_{vD} = \frac{\left(\sum_{k=1}^{K}w_{k}S_{k}^{2}\right)^{2}}{\sum_{k=1}^{K}w_{k}^{2}\left(S_{k}^{2}\right)^{2}/(\nu_{k}+2)} - 2.$$
 
 #### Basic call
 
@@ -476,110 +436,3 @@ repository.
 - Welch, B. L. (1947). The Generalization of "Student's" Problem When
   Several Different Population Variances Are Involved. *Biometrika*,
   34(1/2), 28–35. doi:[10.2307/2332510](https://doi.org/10.2307/2332510)
-
-## Committing the documentation to GitHub
-
-The repository is already a Git clone with a configured `origin`
-remote. From the repository directory:
-
-```bash
-cd /home/matthias/python/Corrected-Welch-Satterthwaite
-```
-
-### 1. Check what changed
-
-```bash
-git status
-```
-
-`Documentation.md` should appear as an untracked file. The LaTeX source
-`short_satter_07152026.tex` may also appear as untracked if it has not
-been committed yet.
-
-### 2. Stage the documentation
-
-```bash
-git add Documentation.md
-```
-
-If you also want to commit the LaTeX source in the same commit:
-
-```bash
-git add Documentation.md short_satter_07152026.tex
-```
-
-Review the staged changes:
-
-```bash
-git diff --cached
-```
-
-### 3. Commit
-
-```bash
-git commit -m "Add documentation for corrected Welch-Satterthwaite functions"
-```
-
-### 4. Push to GitHub
-
-```bash
-git push origin main
-```
-
-### One-line version
-
-```bash
-git add Documentation.md && git commit -m "Add documentation for corrected Welch-Satterthwaite functions" && git push origin main
-```
-
-### If Git asks who you are
-
-Configure your name and email once:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
-
-### If the push is rejected
-
-If GitHub reports that the remote contains work you do not have locally,
-rebase on the remote branch and push again:
-
-```bash
-git pull --rebase origin main
-git push origin main
-```
-
-### Authentication
-
-If `git push` asks for a username and password, use a GitHub personal
-access token (PAT) as the password, or authenticate with the GitHub CLI:
-
-```bash
-gh auth login
-git push origin main
-```
-
-Prefer a credential helper, the GitHub CLI, or an SSH remote over putting
-a token directly in the remote URL. If a token has been embedded in a
-remote URL, treat it as exposed and rotate it in GitHub settings. You can
-list the configured remote names without printing their URLs with:
-
-```bash
-git remote
-```
-
-If you need to inspect the URL, `git remote get-url origin` prints it;
-avoid sharing that output when a token is embedded in the URL.
-
-### Verify the result
-
-After pushing, open the repository on GitHub and confirm that
-`Documentation.md` appears on the `main` branch. You can also check
-locally:
-
-```bash
-git log --oneline -3
-git status
-```
