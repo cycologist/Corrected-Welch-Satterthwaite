@@ -89,7 +89,6 @@ s2^2 / (w1^2 * s2_1^2 / (nu_1 + 2) +
 | `simulate_corrected_ws.py` | Python translation of the simulation study. |
 | `corrected_welch_satterthwaite_iml.sas` | SAS/IML source defining `cws()` and `cws2()` modules. |
 | `simulate_corrected_ws.sas` | SAS/IML translation of the simulation study. |
-| `short_satter_07152026.tex` | LaTeX source of the derivation and paper. |
 | `LICENSE` | CC0 1.0 Universal public-domain dedication. |
 | `README.md` | This file. |
 
